@@ -5,11 +5,14 @@ public class Actor : MonoBehaviour
     [SerializeField] private int point = 1;
     [SerializeField] private bool isTouched = false;
     [SerializeField] private AudioClip[] catched_sounds;
+    
     private AudioSource audioSource;
     private Transform catcher;
     private Vector3 localHitPoint;
+
     private void Start()
     {
+        //StartCoroutine(Death());
         catcher = GameObject.FindGameObjectWithTag("BugCatcher").transform;
         audioSource = GetComponent<AudioSource>();
     }
@@ -42,8 +45,8 @@ public class Actor : MonoBehaviour
            // Get the first contact point
             ContactPoint contact = collision.contacts[0];
             Vector3 hitPoint = contact.point;
-
-            AudioClip catched_sound = catched_sounds[Random.Range(0, catched_sounds.Length)];
+            int sound_index = Random.Range(0, catched_sounds.Length);
+            AudioClip catched_sound = catched_sounds[sound_index];
             audioSource.PlayOneShot(catched_sound);
 
             // Convert world hitPoint into local position relative to catcher
@@ -73,23 +76,4 @@ public class Actor : MonoBehaviour
         }
         
     }
-    void OnTriggerEnter(Collider col)
-    {
-        if (col.gameObject.tag == "BugCatcher")
-        {
-            isTouched = true;
-            Debug.Log("isTouched: " + isTouched);
-        }
-    }
-
-    void OnTriggerExit(Collider col)
-    {
-        if (col.gameObject.tag == "BugCatcher")
-        {
-
-            isTouched = false;
-            Debug.Log("isTouched: " + isTouched);
-        }
-        
-    } 
 }

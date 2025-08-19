@@ -1,10 +1,13 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
-public class inplace_Spark : Spark
+public class Words_Spark : Spark
 {
-    //[Header("Helper")]
-    //[SerializeField] private GameObject spark;
+    [SerializeField] private Sprite[] words;
+    [SerializeField] private float IntervalSpawns;
+    [SerializeField] private GameObject word;
+    private float timeBtwSpawns = 0;
+    private int index = 0;
     private Rigidbody rb;
 
     [Header("Special Property")]
@@ -12,18 +15,45 @@ public class inplace_Spark : Spark
     [SerializeField] private float MinTimeBetweenDirectionChange = 0.2f;
     [SerializeField] private float MaxTimeBetweenDirectionChange = 0.4f;
     [SerializeField] private float WanderRadius = 0.5f;
-    
+
     private Vector3 targetPosition;
     private Vector3 Center;
+
+    public override void UpdateSpark()
+    {
+        if (timeBtwSpawns <= 0)
+        {
+            GameObject instance = (GameObject)Instantiate(word, transform.position, Quaternion.identity);
+            float scaleDown = transform.parent.localScale.x * (2f / 3f);
+            instance.transform.localScale = new Vector3(scaleDown, scaleDown, scaleDown);
+            instance.GetComponent<ChangeSprite>().ChangeNewSprite(words[index]);
+            index = (index + 1) % words.Length;
+            timeBtwSpawns = IntervalSpawns;
+        }
+        else
+        {
+            timeBtwSpawns -= Time.deltaTime;
+        }
+
+    }
 
     public override void StartFunction()
     {
         StartCoroutine(ChangeDirRoutine());
         Center = gameObject.transform.parent.position;
         rb = GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            Debug.Log("rb not found");
+        }
+        else
+        {
+            Debug.Log("rb found");
+
+        }
     }
 
-     private IEnumerator ChangeDirRoutine()
+    private IEnumerator ChangeDirRoutine()
     {
         while (true)
         {
@@ -33,10 +63,11 @@ public class inplace_Spark : Spark
         }
     }
 
-    private void RandomPickDir() {
+    private void RandomPickDir()
+    {
         // Pick a random point within WanderRadius
         Vector3 randomOffset = Random.insideUnitSphere * WanderRadius;
-        
+
         targetPosition = Center + randomOffset;
         // Calculate velocity to move toward the target
         Vector3 dir = (targetPosition - Center).normalized;
@@ -57,6 +88,8 @@ public class inplace_Spark : Spark
             RandomPickDir();
         }
     }
-
-    
+    public override void DrawGizmos(){
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(gameObject.transform.parent.position, WanderRadius);
+    }
 }
