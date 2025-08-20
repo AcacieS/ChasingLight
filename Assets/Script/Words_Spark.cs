@@ -18,13 +18,31 @@ public class Words_Spark : Spark
 
     private Vector3 targetPosition;
     private Vector3 Center;
+    private float scaleDown = 1f;
+
+    public override void StartFunction()
+    {
+        StartCoroutine(ChangeDirRoutine());
+        Center = gameObject.transform.parent.position;
+        rb = GetComponent<Rigidbody>();
+        scaleDown = transform.parent.localScale.x * (2f / 3f);
+
+        if (rb == null)
+        {
+            Debug.Log("rb not found");
+        }
+        else
+        {
+            Debug.Log("rb found");
+
+        }
+    }
 
     public override void UpdateSpark()
     {
         if (timeBtwSpawns <= 0)
         {
-            GameObject instance = (GameObject)Instantiate(word, transform.position, Quaternion.identity);
-            float scaleDown = transform.parent.localScale.x * (2f / 3f);
+            GameObject instance = (GameObject) Instantiate(word, transform.position, Quaternion.identity);
             instance.transform.localScale = new Vector3(scaleDown, scaleDown, scaleDown);
             instance.GetComponent<ChangeSprite>().ChangeNewSprite(words[index]);
             index = (index + 1) % words.Length;
@@ -37,21 +55,7 @@ public class Words_Spark : Spark
 
     }
 
-    public override void StartFunction()
-    {
-        StartCoroutine(ChangeDirRoutine());
-        Center = gameObject.transform.parent.position;
-        rb = GetComponent<Rigidbody>();
-        if (rb == null)
-        {
-            Debug.Log("rb not found");
-        }
-        else
-        {
-            Debug.Log("rb found");
-
-        }
-    }
+    
 
     private IEnumerator ChangeDirRoutine()
     {
