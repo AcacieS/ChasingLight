@@ -302,7 +302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowGizmos: 1
-  die: 1
+  die: 0
   boatScript: {fileID: 0}
   boat: {fileID: 0}
   sparkType: 1
@@ -312,20 +312,22 @@ MonoBehaviour:
   catched_sounds:
   - {fileID: 8300000, guid: a0fad3bac4a405d4f9fe82c24c9b63fd, type: 3}
   - {fileID: 8300000, guid: e63aa2e62e9dc3d48b93fa890d3231e9, type: 3}
-  words:
-  - {fileID: 1191444557, guid: 35227f86cd134f24d83677da5b27a025, type: 3}
-  - {fileID: -1020949408, guid: 5df45a1f1ea0ba746ab3f49197fe3a02, type: 3}
-  - {fileID: 1202187212, guid: fad162406d2cce04f9ba6631df646ff2, type: 3}
-  - {fileID: 1004840345, guid: 644cbc5e7843da94e83b7e75108cab6a, type: 3}
-  - {fileID: -726140631, guid: 0fb3ae99e70a3ef449bc1a55f682e9da, type: 3}
-  - {fileID: 1202187212, guid: fad162406d2cce04f9ba6631df646ff2, type: 3}
+  words: Warmth
+  listWords:
+  - Warmth
+  - Lonely
+  - Home
+  - Fire
+  - Sparks
+  - Dream
   IntervalSpawns: 0.15
   word: {fileID: 5104459430201907245, guid: fbd4109022107cc4483d45e4b9169400, type: 3}
-  boat: {fileID: 0}
+  wordType: 0
   WanderSpeed: 1
   MinTimeBetweenDirectionChange: 1
   MaxTimeBetweenDirectionChange: 2
   WanderRadius: 1
+  touchedBoat: 0
 --- !u!82 &8278560452641519792
 AudioSource:
   m_ObjectHideFlags: 0

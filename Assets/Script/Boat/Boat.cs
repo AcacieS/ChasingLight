@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Boat : MonoBehaviour
@@ -31,7 +32,7 @@ public class Boat : MonoBehaviour
 
         }
     }
-    public void WordBoat(WordsType wordType)
+    public void WordBoat(string wordType)
     {
         Debug.Log("Show words");
         wordBoatScript.ShowWordBoat(wordType);

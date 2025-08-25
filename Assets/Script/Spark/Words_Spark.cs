@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Words_Spark : Spark
 {
-    [SerializeField] private Sprite[] words;
+    [SerializeField] private string words;
+    private string[] sentence;
     [SerializeField] private float IntervalSpawns;
     [SerializeField] private GameObject word;
     private float timeBtwSpawns = 0;
@@ -12,6 +13,7 @@ public class Words_Spark : Spark
     private Rigidbody rb;
 
     [Header("Special Property")]
+    [SerializeField, TextArea] private string debugSentencePreview;
     [SerializeField] private WordsType wordType;
     [SerializeField] private float WanderSpeed = 1;
     [SerializeField] private float MinTimeBetweenDirectionChange = 0.2f;
@@ -22,9 +24,15 @@ public class Words_Spark : Spark
     private Vector3 targetPosition;
     private Vector3 Center;
     private float scaleDown = 1f;
-
+    public static event System.Action<bool> OnSentenceChanged;
+   
     public override void StartFunction()
     {
+        sentence = WordBoat.Instance.GetSentence();
+        debugSentencePreview = string.Join(" ", sentence);
+        int wordIndex = Random.Range(0, sentence.Length);
+        words = sentence[wordIndex];
+
         StartCoroutine(ChangeDirRoutine());
         Center = gameObject.transform.parent.position;
         rb = GetComponent<Rigidbody>();
@@ -37,37 +45,12 @@ public class Words_Spark : Spark
         TowardsBoat();
         
     }
-    // private void TowardsBoat()
-    // {
-
-    //     if (!isCatched || touchedBoat) return;
-    //     Vector3 target = boat.transform.position;
-    //     Debug.Log("Towards Boat: " + target);
-
-    //     // Move towards target
-    //     transform.position = Vector3.MoveTowards(
-    //         transform.position,
-    //         target,
-    //         WanderSpeed * Time.deltaTime
-    //     );
-    //      Debug.Log("Transform: " + transform.position);
-
-    //     // Check if reached target position
-    //     if (Vector3.Distance(transform.position, target) < 0.1f)
-    //     {
-    //         Debug.Log("Finish Words Spark");
-    //         touchedBoat = true;
-    //         die = false;
-    //         // Stop or do floating behavior
-    //     }
-    // }
-
     private void TowardsBoat()
     {
         if (!isCatched || touchedBoat) return;
 
         Vector3 target = boat.transform.position;
-        
+
 
         // Direction toward the boat
         Vector3 dir = (target - transform.position).normalized;
@@ -79,12 +62,24 @@ public class Words_Spark : Spark
         if (Vector3.Distance(transform.position, target) < 0.7f)
         {
             Debug.Log("Finish Words Spark");
-
+            CheckSentenceFinish();
             touchedBoat = true;
             die = false;
             rb.linearVelocity = Vector3.zero; // stop moving
-            boatScript.WordBoat(wordType);
+            boatScript.WordBoat(words);
             Destroy(transform.parent.gameObject);
+        }
+        
+    }
+    private void CheckSentenceFinish()
+    {
+        bool isFinish = WordBoat.Instance.IsSentenceFinish();
+        if (isFinish)
+        {
+            sentence = WordBoat.Instance.GetSentence();
+            Debug.Log("new --------------------");
+            debugSentencePreview = string.Join(" ", sentence);
+
         }
     }
 
@@ -95,7 +90,10 @@ public class Words_Spark : Spark
         {
             GameObject instance = (GameObject)Instantiate(word, transform.position, Quaternion.identity);
             instance.transform.localScale = new Vector3(scaleDown, scaleDown, scaleDown);
-            instance.GetComponent<ChangeSprite>().ChangeNewSprite(words[index]);
+            //instance.transform.parent = transform;
+
+            // instance.transform.localPosition = Vector3.zero;
+            instance.GetComponent<ChangeSprite>().ChangeNewChar(words[index]);
             index = (index + 1) % words.Length;
             timeBtwSpawns = IntervalSpawns;
         }
