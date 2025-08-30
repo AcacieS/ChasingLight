@@ -9,7 +9,7 @@ public class SceneManagement : MonoBehaviour
         sceneIndex = SceneManager.GetActiveScene().buildIndex;
     }
 
-    public void Play()
+    public void PlayButton()
     {
         SceneManager.LoadScene(sceneIndex + 1);
     }
