@@ -5,7 +5,7 @@ using UnityEngine;
 public class Words_Spark : Spark
 {
     [SerializeField] private string words;
-    private string[] sentence;
+     private string[] sentence;
     [SerializeField] private float IntervalSpawns;
     [SerializeField] private GameObject word;
     private float timeBtwSpawns = 0;
@@ -28,7 +28,11 @@ public class Words_Spark : Spark
    
     public override void StartFunction()
     {
-        sentence = WordBoat.Instance.GetSentence();
+        if (sentence == null)
+        {
+            sentence = WordBoat.Instance.GetSentence();
+        }
+        
         debugSentencePreview = string.Join(" ", sentence);
         int wordIndex = Random.Range(0, sentence.Length);
         words = sentence[wordIndex];
@@ -36,7 +40,7 @@ public class Words_Spark : Spark
         StartCoroutine(ChangeDirRoutine());
         Center = gameObject.transform.parent.position;
         rb = GetComponent<Rigidbody>();
-        scaleDown = transform.parent.localScale.x * (2f / 3f);
+        scaleDown = transform.parent.localScale.x * (1f / 3f);
     }
 
     public override void UpdateSpark()
@@ -57,11 +61,9 @@ public class Words_Spark : Spark
 
         // Set velocity toward the target
         rb.linearVelocity = dir * WanderSpeed;
-        Debug.Log("?not got there: " + Vector3.Distance(transform.position, target));
         // Check if close enough to "reach" the boat
         if (Vector3.Distance(transform.position, target) < 0.7f)
         {
-            Debug.Log("Finish Words Spark");
             CheckSentenceFinish();
             touchedBoat = true;
             die = false;

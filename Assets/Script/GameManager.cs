@@ -14,13 +14,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform player;
 
 
+
     [Header("Points")]
 
     [SerializeField] private Text pointTxt;
     public static int points = 0;
 
     [Header("CutScene")]
-    [SerializeField] public PlayableDirector director;
+    [SerializeField] private PlayableDirector director;
+    [SerializeField] private bool testSkipDirector = false;
+
     [Header("Spark")]
     [SerializeField] private GameObject[] sparks;
     [SerializeField] Camera camera;
@@ -40,6 +43,8 @@ public class GameManager : MonoBehaviour
 
     public static event System.Action<int> OnPointsChanged;
 
+    private bool spawnActive = true;
+
     // public static int scene = 0;
 
     private void Start()
@@ -47,6 +52,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(SpawnRoutine());
         currentActiveSpark.Add(sparks[indexSpark]);
         netFrame_Mat.SetColor("_EmissionColor", baseColor * Mathf.Pow(2.0f, intensity));
+
     }
 
     void Awake()
@@ -94,33 +100,32 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
+
             float delay = Random.Range(minSpawnDelay, maxSpawnDelay);
             yield return new WaitForSeconds(delay);
+            if (!spawnActive) continue;
             float rMin = attack.getSpawnMinDistance(); // minimum distance from camera
             float rMax = attack.getAttackDistance(); // maximum distance
 
             Vector3 dir = Random.onUnitSphere;
             float distance = Mathf.Sqrt(Random.Range(rMin * rMin, rMax * rMax)); // sqrt for uniform distribution
             Vector3 randomPos = camera.transform.position + dir * distance;
-            // // Random direction
-            // Vector3 dir = Random.onUnitSphere; // normalized direction in all 3D
-            // // Random distance between rMin and rMax
-            // float distance = Random.Range(rMin, rMax);
 
-            // // Compute random position
-            // Vector3 randomPos = camera.transform.position + dir * distance;
-            
-            //Vector3 randomPos = camera.transform.position + Random.insideUnitSphere * attack.getAttackDistance();
             Spawn(randomPos);
         }
     }
+
     private void HandlePointsChanged(int newPoints)
     {
         ChangeNetFrame();
-        if (newPoints == 2 || newPoints == 10)
+        if (newPoints == 5)
         {
             AddSpark();
-            director.Play();
+            if (!testSkipDirector)
+            {
+                director.Play();
+                spawnActive = false;
+            }
         }
     }
     private void ChangeNetFrame()
@@ -142,8 +147,6 @@ public class GameManager : MonoBehaviour
     private void Spawn(Vector3 pos)
     {
         int index = Random.Range(0, currentActiveSpark.Count);
-        //Debug.Log("sparks.Length - 1"+(sparks.Length - 1));
-        //Debug.Log("index " + index );
         GameObject spark = Instantiate(sparks[index], pos, Quaternion.identity);
         GameObject childSpark = spark.transform.GetChild(0).gameObject;  // 0 = first child
         childSpark.GetComponent<Spark>().SetBoat(boat);
@@ -153,5 +156,12 @@ public class GameManager : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(player.position, attack.getAttackDistance());
+    }
+    private void Update()
+    {
+        if (director.state != PlayState.Playing)
+        {
+            spawnActive = true;
+        }
     }
 }

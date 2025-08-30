@@ -1,7 +1,7 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class Word
@@ -52,9 +52,16 @@ public class Sentence
         if (isActive)
         {
             DesactivateWords();
+            showSentenceObj.SetActive(isActive);
         }
-        showSentenceObj.SetActive(isActive);
+        else
+        {
+            showSentenceObj.GetComponent<Animator>().Play("poeme_anim");
+            
+        }
+        
     }
+
     private void DesactivateWords()
     {
         for (int i = 0; i < words.Length; i++)
@@ -113,8 +120,10 @@ public class WordBoat : MonoBehaviour
     public static WordBoat Instance { get; private set; }
 
     [SerializeField] private Sentence[] sentences;
+    [SerializeField] private GameObject poeme;
     public static int index_sentence = 0;
     [SerializeField] private Dictionary<string, int> words_place = new();
+    private bool spawnActive = true;
 
     private void Start()
     {
@@ -171,7 +180,19 @@ public class WordBoat : MonoBehaviour
         bool isFinish = sentences[index_sentence].GetIsFinishSentence();
         if (isFinish)
         {
+            
+            if (index_sentence != 0) sentences[index_sentence - 1].ShowSentence(false);
+            
             StartCoroutine(ShowSentenceWithDelay(2f));
+            Debug.Log("???Should Finish"+index_sentence);
+            if (index_sentence >= sentences.Length-1)
+            {
+                Debug.Log("Should Finish");
+                poeme.SetActive(true);
+                StartCoroutine(ShowSentenceWithDelay(10f));
+                SceneManager.LoadScene("Scenes/End"); 
+                return isFinish;
+            }
             sentences[index_sentence].ShowSentence(true);
             index_sentence++;
             Debug.Log("index sentence: " + index_sentence);
