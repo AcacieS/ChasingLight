@@ -189,8 +189,8 @@ public class WordBoat : MonoBehaviour
             {
                 Debug.Log("Should Finish");
                 poeme.SetActive(true);
-                StartCoroutine(ShowSentenceWithDelay(10f));
-                SceneManager.LoadScene("Scenes/End"); 
+                //StartCoroutine(ShowSentenceWithDelay(20f));
+                //SceneManager.LoadScene("Scenes/End"); 
                 return isFinish;
             }
             sentences[index_sentence].ShowSentence(true);

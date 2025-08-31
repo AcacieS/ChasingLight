@@ -161,6 +161,7 @@ public class GameManager : MonoBehaviour
     {
         if (director.state != PlayState.Playing)
         {
+            Debug.Log("active again");
             spawnActive = true;
         }
     }

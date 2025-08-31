@@ -307,7 +307,7 @@ MonoBehaviour:
   boat: {fileID: 0}
   sparkType: 1
   point: 1
-  minDeath: 4
+  minDeath: 5
   maxDeath: 8
   catched_sounds:
   - {fileID: 8300000, guid: a0fad3bac4a405d4f9fe82c24c9b63fd, type: 3}
